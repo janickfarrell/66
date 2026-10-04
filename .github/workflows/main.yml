@@ -1,0 +1,39 @@
+name: Rename Hugging Face Dataset Folder
+
+on:
+  workflow_dispatch:
+    inputs:
+      old_folder:
+        description: "Current folder name"
+        required: true
+        type: string
+      new_folder:
+        description: "New folder name"
+        required: true
+        type: string
+
+jobs:
+  rename-folder:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install Hugging Face Hub
+        run: |
+          python -m pip install --upgrade pip
+          pip install -U huggingface_hub
+
+      - name: Rename Hugging Face folder
+        env:
+          HF_TOKEN: ${{ secrets.HF_TOKEN }}
+          OLD_FOLDER: ${{ inputs.old_folder }}
+          NEW_FOLDER: ${{ inputs.new_folder }}
+        run: |
+          python rename_folder.py
